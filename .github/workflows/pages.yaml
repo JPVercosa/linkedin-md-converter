@@ -1,9 +1,10 @@
+# .github/workflows/pages.yml
 name: Deploy Angular to GitHub Pages
 
 on:
   push:
-    branches: [ main ]   # troque se sua branch padrão não for "main"
-  workflow_dispatch:      # permite rodar manualmente
+    branches: [ main ]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -17,22 +18,35 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # Opcional: evita prompts/telemetria e acelera um pouco
+      NG_CLI_ANALYTICS: "false"
+      CI: "true"
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
+          cache: 'npm'
 
-      - run: npm ci
-      # IMPORTANTE: base-href = /linkedin-md-converter/ (com barra no fim)
-      - run: npx ng build --configuration production --base-href /linkedin-md-converter/
+      - name: Install deps
+        run: npm ci
 
-      # Publica o conteúdo gerado como artefato de Pages
-      - uses: actions/upload-pages-artifact@v3
+      - name: Build Angular (base-href = /<repo>/)
+        run: |
+          npx ng build --configuration production --base-href "/${{ github.event.repository.name }}/"
+      
+      # (Opcional) Se usar Angular Router em modo SPA, cria um 404.html para redirecionar
+      - name: SPA fallback (copy index.html -> 404.html)
+        run: |
+          APP_DIR="dist/${{ github.event.repository.name }}/browser"
+          cp "$APP_DIR/index.html" "$APP_DIR/404.html"
+
+      - name: Upload artifact to Pages
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: dist/linkedin-md-converter/browser
+          path: dist/${{ github.event.repository.name }}/browser
 
   deploy:
     needs: build

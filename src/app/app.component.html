@@ -1,4 +1,6 @@
 <header [ngClass]="{'dark-theme': isDarkTheme}">
+  <img src="favicon-512x512.png" alt="Site Logo" width="40" height="40" class="site-logo" />
+
   <button mat-icon-button (click)="openSettings()">
     <mat-icon>settings</mat-icon>
   </button>
@@ -93,9 +95,23 @@
       </div>
     </div>
     <button (click)="convert()">Convert</button>
-    <footer>
-      Made by JPVercosa –
-      <a href="https://github.com/jvercosa" target="_blank" rel="noopener">GitHub</a>
-    </footer>
+    <footer class="footer">
+  <span>Made by JPVercosa</span>
+  –
+
+  <!-- GitHub -->
+  <a href="https://github.com/jpvercosa" target="_blank" rel="noopener" class="social-link">
+    GitHub
+  <img src="github-mark.svg" alt="GitHub" class="github-logo" />
+  </a>
+
+  –
+
+  <!-- Connect In -->
+  <a href="https://www.linkedin.com/in/jpvercosa" target="_blank" rel="noopener" class="social-link">
+    Connect
+    <img src="linkedin-icon.svg" alt="Connect In" width="20" height="20" />
+  </a>
+</footer>
   </div>
 </main>
