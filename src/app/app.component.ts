@@ -44,17 +44,23 @@ export class AppComponent {
     navigator.clipboard.writeText(text).catch(err => console.error('Copy failed', err));
   }
 
-  convertMarkdownToLinkedIn(markdown: string): string {
-    let result = markdown
-      .replace(/^###\s+(.*)/gm, `${this.header3Replace} $1`)
-      .replace(/^##\s+(.*)/gm, `${this.header2Replace} $1`)
-      .replace(/^#\s+(.*)/gm, `${this.header1Replace} $1`)
-      .replace(/^\s*[-*]\s+/gm, '• ')
-      .replace(/\*\*(.+?)\*\*/g, (_, txt) => this.toSansSerifBold(txt))
-      .replace(/__(.+?)__/g, (_, txt) => this.toSansSerifItalic(txt));
+convertMarkdownToLinkedIn(markdown: string): string {
+  let result = markdown
+    // Headings
+    .replace(/^###\s+(.*)/gm, `${this.header3Replace} $1`)
+    .replace(/^##\s+(.*)/gm, `${this.header2Replace} $1`)
+    .replace(/^#\s+(.*)/gm, `${this.header1Replace} $1`)
+    // Lists
+    .replace(/^\s*[-*]\s+/gm, '• ')
+    // Bold
+    .replace(/\*\*(.+?)\*\*/g, (_, txt) => this.toSansSerifBold(txt))
+    // Italic
+    .replace(/__(.+?)__/g, (_, txt) => this.toSansSerifItalic(txt))
+    // Links → "Description: URL"
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '$1: $2');
 
-    return result;
-  }
+  return result;
+}
 
   private toSansSerifBold(text: string): string {
     const boldMap: { [key: string]: string } = {
